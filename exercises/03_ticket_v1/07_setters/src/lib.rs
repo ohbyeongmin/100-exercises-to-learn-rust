@@ -2,7 +2,6 @@
 //   Make sure to enforce the same validation rules you have in `Ticket::new`!
 //   Even better, extract that logic and reuse it in both places. You can use
 //   private functions or private static methods for that.
-
 pub struct Ticket {
     title: String,
     description: String,
@@ -11,20 +10,16 @@ pub struct Ticket {
 
 impl Ticket {
     pub fn new(title: String, description: String, status: String) -> Ticket {
-        if title.is_empty() {
-            panic!("Title cannot be empty");
+        if let Err(msg) = Self::validation_title(&title) {
+            panic!("{msg}");
         }
-        if title.len() > 50 {
-            panic!("Title cannot be longer than 50 bytes");
+
+        if let Err(msg) = Self::validation_description(&description) {
+            panic!("{msg}");
         }
-        if description.is_empty() {
-            panic!("Description cannot be empty");
-        }
-        if description.len() > 500 {
-            panic!("Description cannot be longer than 500 bytes");
-        }
-        if status != "To-Do" && status != "In Progress" && status != "Done" {
-            panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
+
+        if let Err(msg) = Self::validation_status(&status) {
+            panic!("{msg}");
         }
 
         Ticket {
@@ -32,6 +27,33 @@ impl Ticket {
             description,
             status,
         }
+    }
+
+    fn validation_title(title: &str) -> Result<(), &str> {
+        if title.is_empty() {
+            return Err("Title cannot be empty");
+        }
+        if title.len() > 50 {
+            return Err("Title cannot be longer than 50 bytes");
+        }
+        Ok(())
+    }
+
+    fn validation_description(description: &str) -> Result<(), &str> {
+        if description.is_empty() {
+            return Err("Description cannot be empty");
+        }
+        if description.len() > 500 {
+            return Err("Description cannot be longer than 500 bytes");
+        }
+        Ok(())
+    }
+
+    fn validation_status(status: &str) -> Result<(), &str> {
+        if status != "To-Do" && status != "In Progress" && status != "Done" {
+            return Err("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
+        }
+        Ok(())
     }
 
     pub fn title(&self) -> &String {
@@ -44,6 +66,27 @@ impl Ticket {
 
     pub fn status(&self) -> &String {
         &self.status
+    }
+
+    pub fn set_title(&mut self, title: String) {
+        if let Err(msg) = Self::validation_title(&title) {
+            panic!("{msg}");
+        }
+        self.title = title;
+    }
+
+    pub fn set_description(&mut self, description: String) {
+        if let Err(msg) = Self::validation_description(&description) {
+            panic!("{msg}");
+        }
+        self.description = description;
+    }
+
+    pub fn set_status(&mut self, status: String) {
+        if let Err(msg) = Self::validation_status(&status) {
+            panic!("{msg}");
+        }
+        self.status = status;
     }
 }
 
