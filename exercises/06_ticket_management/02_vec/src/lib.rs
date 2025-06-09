@@ -1,3 +1,5 @@
+use std::ops::RangeInclusive;
+
 // Given a number `n`, return the `n+1`th number in the Fibonacci sequence.
 //
 // The Fibonacci sequence is defined as follows:
@@ -15,7 +17,16 @@ pub fn fibonacci(n: u32) -> u32 {
     //
     // Hint: use a `Vec` to memoize the results you have already calculated
     // so that you don't have to recalculate them several times.
-    todo!()
+
+    let mut mem: Vec<u32> = vec![0, 1];
+
+    let ran: RangeInclusive<usize> = 2..=n.try_into().unwrap();
+
+    for i in ran {
+        let addition = mem[i - 1] + mem[i - 2];
+        mem.push(addition);
+    }
+    mem[n as usize]
 }
 
 #[cfg(test)]
